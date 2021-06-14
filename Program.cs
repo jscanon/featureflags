@@ -17,29 +17,14 @@ namespace app_config_web
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                    webBuilder.ConfigureAppConfiguration(config =>
-                    {
-                        var settings = config.Build();
-
-                        // obtenga la cadena de conexión
-                        // del store de secretos
-                        var connection = settings.GetConnectionString("AppConfig");
-
-                        // use las opciones de App Configuration
-                        config.AddAzureAppConfiguration(options =>
-                            options.Connect(connection)
-                                // Refresh
-                                .ConfigureRefresh(refresh =>
-                                {
-                                    refresh.Register("TestApp:Settings:Sentinel", refreshAll: true);
-                                })
-                                // use feature flags
-                                .UseFeatureFlags(featureFlagOptions => {
-                                    featureFlagOptions.CacheExpirationInterval = TimeSpan.FromSeconds(30);
-                                })
-                            );
-                    }).UseStartup<Startup>());
+    Host.CreateDefaultBuilder(args)
+        .ConfigureWebHostDefaults(webBuilder =>
+            webBuilder.ConfigureAppConfiguration(config =>
+            {
+                var settings = config.Build();
+                var connection = settings.GetConnectionString("AppConfig");
+                config.AddAzureAppConfiguration(options =>
+                    options.Connect(connection).UseFeatureFlags());
+            }).UseStartup<Startup>());
     }
 }
