@@ -2,6 +2,7 @@ namespace TestFeatureFlags
 {
     public enum MyFeatureFlags
     {
-        Delta
+        Delta,Beta
+        
     }
 }
